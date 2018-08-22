@@ -2,7 +2,8 @@
     <div>
         <div class="title">
         </div>
-        <div class="list-content" @touchstart="touchStart" @touchmove="touchMove" @touchend="touchEnd">
+        <div ref="listContent" class="list-content" @touchstart="touchStart" @touchmove="touchMove"
+             @touchend="touchEnd">
             <div class="scroll" :style="`transform: translate3d(0px, ${scrollTranslate3dY}px, 0px) scale(1);`">
                 <div class="list disable-user-behavior">
                     <div class="item" v-for="(item,index) in showList"
@@ -23,6 +24,7 @@
         },
         data() {
             return {
+                contentOffsetTop: 0,
                 scrollTranslate3dY: 0,
                 showList: [],
                 mList: [],
@@ -35,9 +37,13 @@
             list: function (newVal, oldVal) {
                 this.mList = newVal;
                 this.drawList();
+            },
+            scrollTranslate3dY: function (newVal, oldVal) {
+                console.log(this.contentOffsetTop);
             }
         },
         mounted: function () {
+            this.contentOffsetTop = this.$refs.listContent.offsetTop;
         },
         methods: {
             drawList: function () {
@@ -56,6 +62,7 @@
             touchMove: function (e) {
                 let nowY = e.touches[0].pageY;
                 let moveY = nowY - this.lastY;
+                //如果向下拉动使顶部脱离则只能移动一半的距离
                 if (this.scrollTranslate3dY > 0 && moveY > 0) {
                     this.scrollTranslate3dY += (moveY / 2);
                 } else {
@@ -82,10 +89,12 @@
                 const lastMoveTime = startTime - this.lastMoveTime;
                 const v = (this.lastY - this.lastMoveStart) / lastMoveTime; //最后一段时间手指划动速度
                 if (this.scrollTranslate3dY < 0) {
+                    //结束拉动发现顶部正常且没有在结束前骤停，则继续惯性滑动
                     if (lastMoveTime < 300) {
                         this.inertiaMove(v, startTime, this.scrollTranslate3dY);
                     }
                 } else {
+                    //结束拉动发现顶部脱离则回到顶部
                     this.topScrollBack();
                 }
             },
@@ -93,16 +102,18 @@
                 if (this.stopInertiaMove) {
                     return;
                 }
+                //回弹速度为Y轴偏移量*0.04（暂定）
                 let backV = this.scrollTranslate3dY * 0.04;
                 let backY = this.scrollTranslate3dY - backV;
+                //小于0修正
                 if (backY < 0) {
                     backY = 0;
                 }
                 this.scrollTranslate3dY = backY;
-                if (backY !== 0) {
+                if (backY.toFixed(0) != 0) {
                     setTimeout(() => {
                         this.topScrollBack();
-                    }, 10);
+                    });
                 }
             },
             inertiaMove: function (v, startTime, contentY) {
@@ -110,20 +121,24 @@
                 if (this.stopInertiaMove) {
                     return;
                 }
-                const dir = v > 0 ? -1 : 1; //加速度方向
+                //加速度方向
+                const dir = v > 0 ? -1 : 1;
                 const deceleration = dir * 0.0006;
                 const t = nowTime - startTime;
+                //速度持续靠近0
                 const nowV = v + t * deceleration;
-                // 速度方向变化表示速度达到0了
+                // 速度方向变化表示速度达到0了，则停止
                 if (dir * nowV > 0) {
                     return;
                 }
                 const moveY = (v + nowV) / 2 * t;
                 this.scrollTranslate3dY = contentY + moveY;
-                if (this.scrollTranslate3dY > 0) {
+
+                // 惯性运动过程中使顶部脱离，并且还存在持续的速度，则让这个速度*100（暂定）为回滚的临界点
+                if (this.scrollTranslate3dY > 0 && this.scrollTranslate3dY > nowV * 100) {
                     setTimeout(() => {
                         this.topScrollBack()
-                    }, 10);
+                    });
 
                 } else {
                     setTimeout(() => {
