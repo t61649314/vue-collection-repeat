@@ -1,6 +1,14 @@
 <template>
     <div id="app">
-        <CollectionRepeat :list="list"/>
+        <div class="title">
+        </div>
+        <CollectionRepeat :list="list">
+            <template slot-scope="scope">
+                <div style="border: 1px red solid;height: 55px">
+                    {{ scope.item }}
+                </div>
+            </template>
+        </CollectionRepeat>
     </div>
 </template>
 
@@ -18,7 +26,7 @@
             }
         },
         mounted() {
-            for (let i = 1; i < 10000; i++) {
+            for (let i = 1; i < 100000; i++) {
                 this.list.push(i);
             }
         }
@@ -36,5 +44,10 @@
 
     body {
         margin: 0;
+    }
+
+    .title {
+        height: 50px;
+        background-color: red;
     }
 </style>

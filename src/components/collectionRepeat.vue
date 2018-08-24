@@ -1,22 +1,27 @@
 <template>
-    <div>
-        <div class="title">
-        </div>
-        <div ref="listContent" class="list-content" @touchstart="touchStart" @touchmove="touchMove"
-             @touchend="touchEnd">
-            <div class="scroll" :style="`transform: translate3d(0px, ${scrollTranslate3dY}px, 0px) scale(1);`">
-                <div class="list disable-user-behavior">
-                    <div class="item" v-for="(item,index) in showList"
-                         :style="`transform: translate3d(0px, ${index*54}px, 0px) scale(1);`">
-                        {{ item }}
-                    </div>
+    <div ref="listContent" class="list-content" @touchstart="touchStart" @touchmove="touchMove"
+         @touchend="touchEnd">
+        <div class="scroll" :style="`transform: translate3d(0px, ${scrollTranslate3dY}px, 0px) scale(1);`">
+            <div ref="list" class="list disable-user-behavior">
+                <div class="item" v-for="(item,index) in showList"
+                     :style="`transform: translate3d(0px, ${item.translate3dY}px, 0px) scale(1);`">
+                    <slot v-bind:item="item.data">
+                        {{ item.data }}
+                    </slot>
                 </div>
             </div>
+        </div>
+        <div class="hide-item" ref="hideItem">
+            <slot v-bind:item="list[0]">
+                {{ list[0] }}
+            </slot>
         </div>
     </div>
 </template>
 
 <script>
+    import _ from "lodash"
+
     export default {
         name: 'CollectionRepeat',
         props: {
@@ -24,6 +29,10 @@
         },
         data() {
             return {
+                lastIndex: 0,
+                firstIndex: 0,
+                onChangeY: 0,
+                itemHeight: 0,
                 contentOffsetTop: 0,
                 scrollTranslate3dY: 0,
                 showList: [],
@@ -39,15 +48,52 @@
                 this.drawList();
             },
             scrollTranslate3dY: function (newVal, oldVal) {
-                console.log(this.contentOffsetTop);
+                //往下滚动
+                if (newVal < oldVal) {
+                    if (newVal < this.onChangeY) {
+                        let pushCount = parseInt((this.onChangeY - newVal) / this.itemHeight);
+                        for (let i = 0; i < pushCount; i++) {
+                            this.onChangeY -= this.itemHeight;
+                            this.firstIndex++;
+                            this.lastIndex++;
+                            this.showList.push(this.mList[this.lastIndex]);
+                            this.showList.shift();
+                        }
+                    }
+                } else {
+                    if (newVal < 0 && newVal > this.onChangeY && this.firstIndex > 0) {
+                        let pushCount = parseInt((newVal - this.onChangeY) / this.itemHeight);
+                        for (let i = 0; i < pushCount; i++) {
+                            this.onChangeY += this.itemHeight;
+                            this.firstIndex--;
+                            this.lastIndex--;
+                            this.showList.unshift(this.mList[this.firstIndex]);
+                            this.showList.pop();
+                        }
+                    }
+                }
             }
         },
         mounted: function () {
             this.contentOffsetTop = this.$refs.listContent.offsetTop;
+            this.windowHeight = window.innerHeight;
         },
         methods: {
             drawList: function () {
-                this.showList = this.mList.slice(0, 20);
+                this.$nextTick(() => {
+                    this.itemHeight = this.$refs.hideItem.clientHeight;
+                    this.count = parseInt(this.windowHeight * 1.6 / this.itemHeight);
+                    this.lastIndex = this.count - 1;
+                    this.firstIndex = 0;
+                    this.onChangeY = -this.windowHeight * 0.3;
+                    this.mList = _.map(this.mList, (item, index) => {
+                        return {
+                            data: item,
+                            translate3dY: index * this.itemHeight
+                        }
+                    });
+                    this.showList = this.mList.slice(0, this.count)
+                });
             },
             touchStart: function (e) {
                 this.lastY = e.touches[0].pageY;
@@ -110,6 +156,7 @@
                     backY = 0;
                 }
                 this.scrollTranslate3dY = backY;
+                //fix到0就强行停止，不然会无限接近0的
                 if (backY.toFixed(0) != 0) {
                     setTimeout(() => {
                         this.topScrollBack();
@@ -165,9 +212,8 @@
         height: auto;
     }
 
-    .title {
-        height: 50px;
-        background-color: red;
+    .hide-item {
+        visibility: hidden;
     }
 
     .list {
@@ -177,15 +223,7 @@
         .item {
             width: 100%;
             box-sizing: border-box;
-            height: 55px;
-            line-height: 21px;
-            background-color: #fff;
-            color: #444;
-            display: block;
             margin: -1px;
-            padding: 16px;
-            border: 1px solid #ddd;
-            font-size: 16px;
             left: 0 !important;
             top: 0 !important;
             position: absolute !important;
