@@ -81,7 +81,7 @@
         methods: {
             drawList: function () {
                 this.$nextTick(() => {
-                    this.itemHeight = this.$refs.hideItem.clientHeight;
+                    this.itemHeight = this.$refs.hideItem.clientHeight - 1;
                     this.count = parseInt(this.windowHeight * 1.6 / this.itemHeight);
                     this.lastIndex = this.count - 1;
                     this.firstIndex = 0;
@@ -223,7 +223,6 @@
         .item {
             width: 100%;
             box-sizing: border-box;
-            margin: -1px;
             left: 0 !important;
             top: 0 !important;
             position: absolute !important;
@@ -237,7 +236,6 @@
         -ms-user-select: none;
         user-select: none;
         -webkit-touch-callout: none;
-        -webkit-tap-highlight-color: transparent;
         -webkit-tap-highlight-color: transparent;
         -webkit-user-drag: none;
         -ms-touch-action: none;

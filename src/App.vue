@@ -1,10 +1,11 @@
 <template>
     <div id="app">
         <div class="title">
+            {{list.length}}Item
         </div>
         <CollectionRepeat :list="list">
             <template slot-scope="scope">
-                <div style="border: 1px red solid;height: 55px">
+                <div class="my-item">
                     {{ scope.item }}
                 </div>
             </template>
@@ -48,6 +49,15 @@
 
     .title {
         height: 50px;
-        background-color: red;
+        line-height: 50px;
+        background-color: #387ef5;
+        color: #fff;
+    }
+
+    .my-item {
+        border-top: 1px #ddd solid;
+        border-bottom: 1px #ddd solid;
+        height: 55px;
+        line-height: 55px;
     }
 </style>
