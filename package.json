@@ -3,7 +3,6 @@
   "version": "1.0.2",
   "description": "A Vue.js project",
   "author": "田放 <tianfanga@zbj.com>",
-  "private": true,
   "main": "dist/static/js/main.js",
   "scripts": {
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
@@ -11,7 +10,6 @@
     "build": "node build/build.js"
   },
   "dependencies": {
-    "lodash": "^4.17.10",
     "vue": "^2.5.2"
   },
   "devDependencies": {
