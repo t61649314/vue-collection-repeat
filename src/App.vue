@@ -3,13 +3,15 @@
     <div class="title">
       {{list.length}}Item
     </div>
-    <CollectionRepeat :list="list">
-      <template slot-scope="scope">
-        <div class="my-item">
-          {{ scope.item }}
-        </div>
-      </template>
-    </CollectionRepeat>
+    <div class="collection-box">
+      <CollectionRepeat :list="list">
+        <template slot-scope="scope">
+          <div class="my-item">
+            {{ scope.item }}
+          </div>
+        </template>
+      </CollectionRepeat>
+    </div>
   </div>
 </template>
 
@@ -34,13 +36,15 @@
   }
 </script>
 
-<style>
+<style lang="less">
   #app {
     font-family: 'Avenir', Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-align: center;
     color: #2c3e50;
+    height: 100%;
+    font-size: 16px;
   }
 
   body {
@@ -48,16 +52,21 @@
   }
 
   .title {
-    height: 50px;
-    line-height: 50px;
+    height: 1rem;
+    line-height: 1rem;
     background-color: #387ef5;
     color: #fff;
   }
 
-  .my-item {
-    border-top: 1px #ddd solid;
-    border-bottom: 1px #ddd solid;
-    height: 55px;
-    line-height: 55px;
+  .collection-box {
+    position: relative;
+    height: calc(100% - 1rem);
+    .my-item {
+      border-top: 0.01rem #ddd solid;
+      border-bottom: 0.01rem #ddd solid;
+      height: 1rem;
+      line-height: 1rem;
+    }
   }
+
 </style>
