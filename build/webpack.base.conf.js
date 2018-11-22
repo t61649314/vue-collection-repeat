@@ -12,7 +12,9 @@ function resolve (dir) {
 
 module.exports = {
   context: path.resolve(__dirname, '../'),
-  entry: "./src/index.js",
+  entry: {
+    app: './src/index.js'
+  },
   output: {
     path: config.build.assetsRoot,
     filename: '[name].js',

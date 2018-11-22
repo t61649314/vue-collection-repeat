@@ -1,9 +1,9 @@
 {
   "name": "vue-collection-repeat",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A Vue.js project",
   "author": "田放 <tianfanga@zbj.com>",
-  "main": "dist/static/js/main.js",
+  "main": "dist/collection-repeat.min.js",
   "scripts": {
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
     "start": "npm run dev",
