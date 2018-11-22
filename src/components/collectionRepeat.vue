@@ -92,6 +92,7 @@
           const length = this.mList.length;
           this.itemHeight = this.$refs.hideItem.clientHeight - 1 + this.margin;
           this.minScrollTranslate3dY = this.windowHeight - length * this.itemHeight;
+          this.minScrollTranslate3dY = this.minScrollTranslate3dY > 0 ? 0 : this.minScrollTranslate3dY;
           this.getHeightDone = true;
           const windowCoverCount = parseInt(this.windowHeight * 1.6 / this.itemHeight);
           const count = length < windowCoverCount ? length : windowCoverCount;

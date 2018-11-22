@@ -1,6 +1,6 @@
 {
   "name": "vue-collection-repeat",
-  "version": "1.0.3",
+  "version": "1.0.31",
   "description": "A Vue.js project",
   "author": "田放 <tianfanga@zbj.com>",
   "main": "dist/collection-repeat.min.js",
