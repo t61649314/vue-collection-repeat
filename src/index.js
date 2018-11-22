@@ -1,5 +1,3 @@
 import CollectionRepeat from './components/collectionRepeat.vue'
 
-export default {
-  CollectionRepeat
-};
+export default CollectionRepeat;
