@@ -109,6 +109,8 @@
         });
       },
       touchStart: function (e) {
+        e.stopPropagation();
+        e.preventDefault();
         this.lastY = e.touches[0].pageY;
 
         /**
@@ -119,6 +121,8 @@
         this.stopInertiaMove = true;
       },
       touchMove: function (e) {
+        e.stopPropagation();
+        e.preventDefault();
         let nowY = e.touches[0].pageY;
         let moveY = nowY - this.lastY;
         //如果向下拉动使顶部脱离顶部或者向上拉动使底部触底则只能移动一半的距离
@@ -140,6 +144,8 @@
 
       },
       touchEnd: function (e) {
+        e.stopPropagation();
+        e.preventDefault();
         /**
          * 缓动代码
          */
