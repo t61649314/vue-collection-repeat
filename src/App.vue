@@ -45,6 +45,7 @@
     color: #2c3e50;
     height: 100%;
     font-size: 16px;
+    overflow: hidden;
   }
 
   body {
